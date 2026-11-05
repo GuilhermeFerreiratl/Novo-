@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIMULADOR - Leilão Teste</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;background:#f2f2f2}
+.topo{background:#000;color:#22c55e;text-align:center;padding:14px;font-weight:bold;font-size:22px}
+.aviso{background:#ffcc00;text-align:center;padding:10px;font-weight:bold}
+.card{background:#fff;margin:12px;border-radius:14px;padding:14px}
+.empresa{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #eee}
+.primeiro{border:2px solid gold;border-radius:10px;background:#fffbe6}
+.produtos{display:flex;gap:8px}
+.prod{flex:1;background:#fff;border-radius:12px;padding:10px;text-align:center}
+.prod b{color:#16a34a}
+button{background:#16a34a;color:#fff;border:none;padding:10px;width:100%;border-radius:8px;font-weight:bold}
+.comprador{display:flex;gap:10px;padding:8px;border-bottom:1px solid #eee;align-items:center}
+.avatar{width:36px;height:36px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold}
+.popup{position:fixed;bottom:15px;left:12px;right:12px;background:#16a34a;color:#fff;padding:14px;border-radius:20px;text-align:center;font-weight:bold}
+</style>
+</head>
+<body>
+
+<div class="topo"><span id="online">2.358.912</span> pessoas online agora - SIMULADOR</div>
+<div class="aviso">⚠️ ISSO É UM SIMULADOR PARA TESTE</div>
+
+<div class="card">
+<h2>LEILÃO AO VIVO 🔴 AO VIVO</h2>
+<div id="leilao"></div>
+</div>
+
+<div class="card">
+<h3>Produtos em Destaque</h3>
+<div class="produtos">
+<div class="prod">☀️<br><b>VARAL 10M</b><br><b>R$ 49,90</b><br><br><button>COMPRAR</button></div>
+<div class="prod">☀️<br><b>VARAL 20M</b><br><b>R$ 79,90</b><br><br><button>COMPRAR</button></div>
+<div class="prod">☀️<br><b>VARAL 30M</b><br><b>R$ 99,90</b><br><br><button>COMPRAR</button></div>
+</div>
+</div>
+
+<div class="card">
+<h3>QUEM COMPROU AGORA - ATUALIZANDO AO VIVO 🟢</h3>
+<div id="quemComprou"></div>
+</div>
+
+<div class="popup" id="popup">✅ Beatriz de Maringá acabou de comprar!</div>
+
+<script>
+let online = 2358912;
+let passo = 10;
+setInterval(()=>{
+  online += passo;
+  passo = (passo === 10) ? -5 : 10;
+  document.getElementById('online').innerText = online.toLocaleString('pt-BR');
+}, 2000);
+
+let empresas = [
+  {nome:"Empresa Demo B - Transporte", lance:1680, cor:"#f59e0b"},
+  {nome:"Empresa Demo A - Comida", lance:1520, cor:"#ef4444"},
+  {nome:"Empresa Demo D - Mercado", lance:1240, cor:"#3b82f6"},
+  {nome:"Empresa Demo C - Frango", lance:1180, cor:"#8b5cf6"},
+  {nome:"Empresa Demo E - Lanches", lance:810, cor:"#10b981"}
+];
+
+function mostraLeilao(){
+  empresas.sort((a,b)=>b.lance-a.lance);
+  document.getElementById('leilao').innerHTML = empresas.map((e,i)=>`
+    <div class="empresa ${i===0?'primeiro':''}"><span>${i+1}º ${e.nome}</span><b>R$ ${e.lance.toLocaleString('pt-BR')}</b></div>
+  `).join('');
+}
+mostraLeilao();
+setInterval(()=>{
+  let i = Math.floor(Math.random()*empresas.length);
+  empresas[i].lance += Math.floor(Math.random()*40)+10;
+  mostraLeilao();
+}, 4000);
+
+let compradores = [
+  {nome:"Carlos - Maringá", prod:"VARAL 30M", tempo:"agora", cor:"#3b82f6"},
+  {nome:"Fernanda - Sarandi", prod:"VARAL 20M", tempo:"há 12 seg", cor:"#ec4899"},
+  {nome:"Pedro - Paiçandu", prod:"VARAL 10M", tempo:"há 25 seg", cor:"#f97316"},
+  {nome:"Juliana - Marialva", prod:"VARAL 30M", tempo:"há 40 seg", cor:"#8b5cf6"},
+  {nome:"Lucas - Mandaguari", prod:"VARAL 20M", tempo:"há 1 min", cor:"#06b6d4"},
+  {nome:"Beatriz - Maringá", prod:"VARAL 10M", tempo:"agora", cor:"#16a34a"},
+  {nome:"Rafael - Maringá", prod:"VARAL 30M", tempo:"há 8 seg", cor:"#eab308"},
+  {nome:"Camila - Sarandi", prod:"VARAL 20M", tempo:"há 18 seg", cor:"#f43f5e"}
+];
+let idx = 0;
+function mostraCompradores(){
+  let lista = [];
+  for(let k=0;k<5;k++){
+    let c = compradores[(idx+k)%compradores.length];
+    lista.push(<div class="comprador"><div class="avatar" style="background:${c.cor}">${c.nome[0]}</div><div><b>${c.nome}</b><br>comprou ${c.prod} - ${c.tempo}</div></div>);
+  }
+  document.getElementById('quemComprou').innerHTML = lista.join('');
+  document.getElementById('popup').innerText = "✅ " + compradores[idx%compradores.length].nome + " acabou de comprar!";
+  idx++;
+}
+mostraCompradores();
+setInterval(mostraCompradores, 3000);
+</script>
+</body>
+</html>
